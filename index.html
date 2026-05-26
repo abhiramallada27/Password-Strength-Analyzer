@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SentinelPass - Cybersecurity Assessment & Password Strength Suite</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="theme-dark">
+    <!-- Background Accent Pattern -->
+    <div class="background-glow"></div>
+
+    <div id="app-root-container" class="app-layout">
+      <!-- Top Navigation & Title Bar -->
+      <header id="master-header" class="header-container">
+        <div class="header-brand">
+          <div class="brand-icon">
+            <i data-lucide="shield"></i>
+          </div>
+          <div class="brand-text">
+            <h1>Sentinel<span class="highlight">Pass</span></h1>
+            <span class="subtitle">Analysis Engine: SHA-256 / Bcrypt Optimized</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <div id="utc-clock" class="utc-clock">
+            <i data-lucide="clock"></i>
+            <span id="utc-time-string">UTC Time: 2026-05-26 06:17:14 UTC</span>
+          </div>
+          
+          <button id="theme-toggle-btn" class="icon-btn" title="Toggle Theme">
+            <i data-lucide="sun" class="sun-icon"></i>
+            <i data-lucide="moon" class="moon-icon"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Tabs Switcher Navigation -->
+      <nav id="tab-switcher" class="tab-switcher">
+        <div class="tab-buttons">
+          <button id="tab-btn-analyzer" class="tab-btn active" data-tab="analyzer">
+            <i data-lucide="key"></i>
+            <span>Strength Assessment</span>
+          </button>
+          <button id="tab-btn-generator" class="tab-btn" data-tab="generator">
+            <i data-lucide="refresh-cw"></i>
+            <span>Entropy Generator</span>
+          </button>
+          <button id="tab-btn-education" class="tab-btn" data-tab="education">
+            <i data-lucide="book-open"></i>
+            <span>Security Specialist Lab</span>
+          </button>
+        </div>
+        <div class="tab-meta">
+          <span>AUDITED SECURE BY SHA-256</span>
+        </div>
+      </nav>
+
+      <!-- Main Interactive Content Panel -->
+      <main id="active-panel-container" class="panel-container">
+        
+        <!-- Tab 1: Analyzer Panel -->
+        <section id="panel-analyzer" class="tab-panel active">
+          <div class="panel-header">
+            <h2><i data-lucide="key"></i> Real-time Password Assessment</h2>
+            <p>Type or paste a credentials candidate below. Our offline analytical engine rates entropy, calculates mathematical keyspaces, and estimates brute-force resiliency.</p>
+          </div>
+
+          <!-- Input Area -->
+          <div class="input-section">
+            <div class="input-labels">
+              <label for="master-password-input">Candidate Password Formulation</label>
+              <button id="commit-history-btn" class="text-btn disabled" disabled>
+                <i data-lucide="plus"></i>
+                <span>Commit to History Log</span>
+              </button>
+            </div>
+            <div class="input-wrapper">
+              <input 
+                id="master-password-input" 
+                type="password" 
+                placeholder="Type a secure formulation..." 
+                autocomplete="off" 
+                spellcheck="false" 
+              />
+              <button id="toggle-visibility-btn" class="visibility-btn" title="Show password">
+                <i data-lucide="eye" class="eye-icon"></i>
+                <i data-lucide="eye-off" class="eye-off-icon hidden"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Alert Reused Warning Banner -->
+          <div id="reuse-warning-banner" class="warning-banner hidden">
+            <i data-lucide="alert-triangle" class="warning-icon"></i>
+            <div class="warning-content">
+              <h4>⚠️ Security Warning: Password Reused / Not Unique</h4>
+              <p id="reuse-warning-text">This credentials candidate is already saved in your history ledger.</p>
+            </div>
+          </div>
+
+          <!-- Strength Rating Card -->
+          <div id="strength-display-card" class="strength-card color-rose">
+            <div class="strength-metrics">
+              <div class="metric-posture">
+                <span class="label-tiny">Threat Resistance Posture</span>
+                <div class="posture-value">
+                  <i data-lucide="shield-alert" id="posture-icon" class="metric-icon"></i>
+                  <h3 id="strength-label">Very Weak</h3>
+                </div>
+              </div>
+              <div class="metric-score">
+                <span class="label-tiny">Numerical Integrity Score</span>
+                <div class="score-value">
+                  <span id="strength-score">0</span>
+                  <span class="score-total">/ 100</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Segmented Progress Bar -->
+            <div class="progress-bar-container">
+              <div class="progress-bar-track">
+                <div id="strength-progress" class="progress-bar-fill" style="width: 0%"></div>
+              </div>
+              <div class="progress-bar-labels">
+                <span>Critical (0-20)</span>
+                <span>Vulnerable (21-44)</span>
+                <span>Adequate (45-69)</span>
+                <span>Highly Secure (70-100)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Grid: Shannon Entropy & Brute Force -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="label-tiny">
+                  Shannon Entropy Rate
+                  <span class="tooltip-container">
+                    <i data-lucide="help-circle" class="tooltip-trigger"></i>
+                    <span class="tooltip-text">Information-theoretic complexity. Measures how many guesses an attacker would have to try. Target at least 60+ bits.</span>
+                  </span>
+                </span>
+                <span id="entropy-badge" class="badge badge-danger">Trivial</span>
+              </div>
+              <div class="stat-value font-mono">
+                <span id="entropy-value">0</span> <span class="unit">bits</span>
+              </div>
+              <p class="stat-desc">Wider character sets increase the keyspace exponentially for every extra letter added.</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="label-tiny">Standard Brute-Force Resiliency</span>
+              </div>
+              <div class="stat-value text-highlight" id="crack-time-value">Instant</div>
+              <div class="stat-footer-info">
+                <i data-lucide="info"></i>
+                <span>Benchmark: High-velocity local GPU rig (10B guesses/sec) hacking hashed leaked files.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rules Checklist & Suggestions Grid -->
+          <div class="details-grid">
+            <!-- Left Side: Rules checklist -->
+            <div class="rules-card">
+              <h4 class="section-title-tiny">Security Rule Alignments</h4>
+              <div class="rules-list">
+                <div class="rule-item" id="rule-length">
+                  <span class="rule-indicator"></span>
+                  <span class="rule-text">At least 8 characters</span>
+                  <span class="rule-badge">Required</span>
+                </div>
+                <div class="rule-item" id="rule-lowercase">
+                  <span class="rule-indicator"></span>
+                  <span class="rule-text">Lowercase letter (a-z)</span>
+                  <span class="rule-badge">Required</span>
+                </div>
+                <div class="rule-item" id="rule-uppercase">
+                  <span class="rule-indicator"></span>
+                  <span class="rule-text">Uppercase letter (A-Z)</span>
+                  <span class="rule-badge">Required</span>
+                </div>
+                <div class="rule-item" id="rule-numbers">
+                  <span class="rule-indicator"></span>
+                  <span class="rule-text">Numeric digit (0-9)</span>
+                  <span class="rule-badge">Required</span>
+                </div>
+                <div class="rule-item" id="rule-symbols">
+                  <span class="rule-indicator"></span>
+                  <span class="rule-text">Special character (e.g., !, @, #, $, %)</span>
+                  <span class="rule-badge">Required</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Suggestions list -->
+            <div class="suggestions-card">
+              <h4 class="section-title-tiny">Actionable Posture Suggestions</h4>
+              <div class="suggestions-box">
+                <ul id="suggestions-list" class="suggestions-list">
+                  <li>Begin typing a password in the input field above to see real-time secure analysis.</li>
+                </ul>
+                <div id="suggestions-tip" class="suggestions-tip">
+                  <p>💡 <strong>Tip:</strong> Try generating a bulletproof password in the <strong>Generator</strong> tab, then paste or apply it here to see how complexity affects entropy!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password History & Audit Log -->
+          <div class="history-section">
+            <div class="history-header">
+              <div class="history-title">
+                <h4><i data-lucide="history"></i> Password History Validation & Identity Audits</h4>
+                <p>Your local assessment ledger. Use this history to ensure high credentials diversity and prevent pattern reuse.</p>
+              </div>
+              <button id="clear-history-btn" class="text-btn danger hidden">
+                <i data-lucide="trash-2"></i>
+                <span>Clear Log</span>
+              </button>
+            </div>
+
+            <div id="history-empty-state" class="history-empty">
+              No entries in audit ledger. Type a candidate password above and click <strong>"Commit to History Log"</strong> to monitor reuse.
+            </div>
+
+            <div id="history-grid" class="history-grid">
+              <!-- Dynamically populated card items -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 2: Generator Panel -->
+        <section id="panel-generator" class="tab-panel">
+          <div class="panel-header">
+            <h2><i data-lucide="refresh-cw"></i> Entropy Generator Utility</h2>
+            <p>Create complex, cryptographically insulated passwords with customizable constraints. Use the length sliders and options below.</p>
+          </div>
+
+          <!-- Output Box -->
+          <div class="generator-output-card">
+            <div class="output-header">
+              <span class="output-title">
+                <i data-lucide="zap"></i> Cryptographic Entropy Output
+              </span>
+              <span id="gen-strength-badge" class="badge badge-success">Excellent (100/100)</span>
+            </div>
+
+            <div class="output-display-box">
+              <p id="generated-password-output" class="font-mono">Select parameters...</p>
+            </div>
+
+            <div class="output-actions">
+              <div class="entropy-info">
+                Entropy density: <strong id="gen-entropy-value" class="font-mono">0 bits</strong>
+              </div>
+              <div class="action-buttons">
+                <button id="regenerate-btn" class="btn btn-secondary" title="Regenerate random password with current preset">
+                  <i data-lucide="refresh-cw"></i>
+                </button>
+                <button id="copy-password-btn" class="btn btn-secondary">
+                  <i data-lucide="copy" class="copy-icon"></i>
+                  <i data-lucide="check" class="check-icon hidden"></i>
+                  <span id="copy-btn-text">Copy</span>
+                </button>
+                <button id="apply-to-analyzer-btn" class="btn btn-primary">
+                  <i data-lucide="shield-check"></i>
+                  <span>Apply & Analyze</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuration Controls -->
+          <div class="controls-grid">
+            <!-- Length slider -->
+            <div class="control-card">
+              <div class="control-header">
+                <label for="length-slider">Password Length</label>
+                <span id="length-badge" class="length-badge">16</span>
+              </div>
+              
+              <input 
+                id="length-slider" 
+                type="range" 
+                min="4" 
+                max="64" 
+                value="16" 
+              />
+
+              <div class="slider-marks">
+                <span>Minimum (4)</span>
+                <span class="text-primary font-bold">Standard (12-16)</span>
+                <span>Unbreakable (64)</span>
+              </div>
+
+              <div class="control-tip">
+                <p>🔒 Cybersecurity tip: Length is much more effective against physical crack hardware than complex pools. Double the length produces exponentially harder combos!</p>
+              </div>
+            </div>
+
+            <!-- Pool toggles -->
+            <div class="control-card">
+              <span class="control-card-title">Character Pools Eligibility</span>
+
+              <div class="checkbox-list">
+                <label class="checkbox-item">
+                  <input type="checkbox" id="pool-uppercase" checked />
+                  <span class="checkbox-custom"></span>
+                  <div class="checkbox-label">
+                    <span class="title">Uppercase characters</span>
+                    <span class="demo font-mono">(A, B, C...)</span>
+                  </div>
+                </label>
+
+                <label class="checkbox-item">
+                  <input type="checkbox" id="pool-lowercase" checked />
+                  <span class="checkbox-custom"></span>
+                  <div class="checkbox-label">
+                    <span class="title">Lowercase characters</span>
+                    <span class="demo font-mono">(a, b, c...)</span>
+                  </div>
+                </label>
+
+                <label class="checkbox-item">
+                  <input type="checkbox" id="pool-numbers" checked />
+                  <span class="checkbox-custom"></span>
+                  <div class="checkbox-label">
+                    <span class="title">Numeric digits</span>
+                    <span class="demo font-mono">(0, 1, 2, 3...)</span>
+                  </div>
+                </label>
+
+                <label class="checkbox-item">
+                  <input type="checkbox" id="pool-symbols" checked />
+                  <span class="checkbox-custom"></span>
+                  <div class="checkbox-label">
+                    <span class="title">Special symbols</span>
+                    <span class="demo font-mono">(!, @, #, $...)</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="similar-chars-toggle">
+                <label class="checkbox-item">
+                  <input type="checkbox" id="exclude-similar" />
+                  <span class="checkbox-custom"></span>
+                  <div class="checkbox-label">
+                    <span class="title">Exclude Similar Characters</span>
+                    <span class="desc">Prevents typos by skipping ambiguous chars (e.g., i, l, 1, o, 0, O)</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab 3: Education Specialist Lab Panel -->
+        <section id="panel-education" class="tab-panel">
+          <div class="panel-header-row">
+            <div class="panel-header-left">
+              <h2><i data-lucide="shield-check"></i> Cybersecurity Specialist Lab</h2>
+              <p>Learn cryptographic workflows, sandbox the math of hashes, and implement best-practice backend pipelines.</p>
+            </div>
+            
+            <div id="edu-sub-tabs" class="edu-sub-tabs">
+              <button class="edu-sub-tab-btn active" data-subtab="sandbox">
+                <i data-lucide="hash"></i>
+                <span>Hashing Sandbox</span>
+              </button>
+              <button class="edu-sub-tab-btn" data-subtab="architecture">
+                <i data-lucide="hard-drive"></i>
+                <span>Security Blueprint</span>
+              </button>
+              <button class="edu-sub-tab-btn" data-subtab="code">
+                <i data-lucide="file-code"></i>
+                <span>Implementation</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sub-panel 1: Sandbox -->
+          <div id="edu-content-sandbox" class="edu-sub-content active">
+            <div class="edu-info-banner">
+              <p>💡 <strong>Why are we doing this?</strong> Hackers don't steal plaintext passwords; they steal lists of hashes from databases. If simple, raw algorithms like SHA-256 are used, hackers can test billions of guesses per second to reverse-engineer weak patterns. To neutralize this threat, modern cybersecurity uses <strong>salting</strong> (concatenating random salts to deter lookup files) and <strong>key stretching</strong> (utilizing slow hashing functions like bcrypt which waste CPU time to prevent automated GPU lookups).</p>
+            </div>
+
+            <div class="sandbox-grid">
+              <!-- Left side: inputs config -->
+              <div class="sandbox-config-card">
+                <h3 class="control-card-title flex-align-center">
+                  <i data-lucide="terminal"></i> Simulation Input Configuration
+                </h3>
+
+                <div class="form-group">
+                  <label for="sandbox-input-text">Candidate Passphrase</label>
+                  <input type="text" id="sandbox-input-text" value="MyP@ssw0rd!" />
+                </div>
+
+                <div class="form-group">
+                  <div class="form-row-between">
+                    <label for="sandbox-salt-input">Cryptoy Salt Addition</label>
+                    <label class="checkbox-item-inline">
+                      <input type="checkbox" id="sandbox-auto-salt" checked />
+                      <span class="checkbox-custom-small"></span>
+                      <span>Auto-generate</span>
+                    </label>
+                  </div>
+                  <div class="salt-input-group">
+                    <input type="text" id="sandbox-salt-input" placeholder="Provide custom salt seed" disabled />
+                    <button id="sandbox-refresh-salt-btn" class="btn btn-secondary-small" title="Generate new salt bytes">
+                      <i data-lucide="refresh-cw"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-group cost-rounds-group">
+                  <div class="form-row-between">
+                    <label for="sandbox-cost-slider">Bcrypt Round Complexity</label>
+                    <span id="sandbox-cost-badge" class="badge-primary">12 rounds</span>
+                  </div>
+                  <input type="range" id="sandbox-cost-slider" min="4" max="16" value="12" />
+                  <span class="field-sub-note">Each bump multiplies computational verification timing by 2x! Highly protective against machine attacks.</span>
+                </div>
+              </div>
+
+              <!-- Right side: output console -->
+              <div class="sandbox-console-card">
+                <div class="console-header">
+                  <span class="console-title"><i data-lucide="play"></i> Sandbox Execution Console</span>
+                  <span id="console-status" class="console-status">online</span>
+                </div>
+
+                <div class="console-steps">
+                  <!-- Step 1 -->
+                  <div class="console-step-box">
+                    <span class="step-label">Step 1: Raw Plaintext Value</span>
+                    <div id="console-step1-value" class="console-step-value plaintext">"MyP@ssw0rd!"</div>
+                    <p class="step-note">This is what is typed. If stored in this state, anyone who opens the database file can look up, read, and compromise user login credentials.</p>
+                  </div>
+
+                  <!-- Step 2 -->
+                  <div class="console-step-box">
+                    <span class="step-label">Step 2: Simple Non-Iterative Hash (SHA-256)</span>
+                    <div id="console-step2-value" class="console-step-value font-mono break-all text-success">Loading...</div>
+                    <p class="step-note warn">
+                      <i data-lucide="alert-triangle"></i>
+                      <span>Highly Vuln! Speed of SHA-256 is measured in nanoseconds. Hackers can attack with massive pre-computed "Rainbow Tables".</span>
+                    </p>
+                  </div>
+
+                  <!-- Step 3 -->
+                  <div class="console-step-box">
+                    <div class="form-row-between">
+                      <span class="step-label">Step 3: Salted SHA-256 Hashing</span>
+                      <span id="console-step3-salt-badge" class="console-salt-badge">Salt: ""</span>
+                    </div>
+                    <div id="console-step3-value" class="console-step-value font-mono break-all text-success">Loading...</div>
+                    <p class="step-note">Salt is unique per user profile. It stops lookups by force-shifting the combined text. However, a single high-velocity GPU assembly can still test billions/sec.</p>
+                  </div>
+
+                  <!-- Step 4 -->
+                  <div class="console-step-box main-step">
+                    <div class="form-row-between">
+                      <span class="step-label">Step 4: Slow Key-Stretching Hash (Bcrypt)</span>
+                      <span id="console-step4-meta-badge" class="console-bcrypt-badge">[ID: $2b$, Cost: 12]</span>
+                    </div>
+                    <div id="console-step4-value" class="console-step-value font-mono break-all text-highlight-secondary">Loading...</div>
+                    <div class="bcrypt-indicators-row">
+                      <span>$2b$ = Blowfish Mode</span>
+                      <span>$12$ = Cost Factor</span>
+                      <span>Salting Integrated</span>
+                    </div>
+                    <p class="step-note">Bcrypt enforces high computation cycles. Since hashing takes ~100ms instead of 1ns, brute-forcing a database leak requires massive energy investments from hackers.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sub-panel 2: Security Blueprint -->
+          <div id="edu-content-architecture" class="edu-sub-content">
+            <div class="blueprint-grid">
+              <!-- Flow 1 -->
+              <div class="blueprint-card">
+                <h3 class="blueprint-card-title">
+                  <span class="badge-num bg-primary">1</span>
+                  User Ingestion & Registration Pipeline
+                </h3>
+                
+                <div class="flow-steps">
+                  <div class="flow-step">
+                    <div class="flow-step-label">User Form</div>
+                    <div class="flow-step-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="flow-step-desc">Checks strength candidate. Demands 8+ chars and entropy density. Accepts credentials.</div>
+                  </div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-label">Server Process</div>
+                    <div class="flow-step-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="flow-step-desc warn">Pulls credentials securely in RAM. Calls <strong>bcrypt.genSalt()</strong> to output a complex seed byte array.</div>
+                  </div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-label">Crypto Math</div>
+                    <div class="flow-step-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="flow-step-desc success font-mono">bcrypt.hash(pwd, salt) stretching: runs 2^cost algorithms. Outputs standard length 60-character hashes.</div>
+                  </div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-label db">Database</div>
+                    <div class="flow-step-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="flow-step-desc highlight">Writes 1 hashed record to the user schema row. The plain text password is lost forever.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Flow 2 -->
+              <div class="blueprint-card">
+                <h3 class="blueprint-card-title">
+                  <span class="badge-num bg-success">2</span>
+                  Identity Verification & Login Pipeline
+                </h3>
+
+                <div class="flow-steps">
+                  <div class="flow-step">
+                    <div class="flow-step-label">Form Login</div>
+                    <div class="flow-step-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="flow-step-desc">Enter typed claimant strings (Plaintext) + email address inputs. Securely transmit via HTTPS.</div>
+                  </div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-label db">User Lookup</div>
+                    <div class="flow-step-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="flow-step-desc">Finds user record. If email is missing, returns fail using a generic response to deter email harvesting.</div>
+                  </div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-label">Math Match</div>
+                    <div class="flow-step-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="flow-step-desc highlight">Pulls stored string: <strong>$2b$12$...</strong>. Extracts cost round variables. Automatically hashes claimant input with original salt.</div>
+                  </div>
+
+                  <div class="flow-step">
+                    <div class="flow-step-label success">Verify Output</div>
+                    <div class="flow-step-arrow"><i data-lucide="arrow-right"></i></div>
+                    <div class="flow-step-desc success">If generated hash matches stored profile record, yields session token keys.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sub-panel 3: Code Implementation -->
+          <div id="edu-content-code" class="edu-sub-content">
+            <div class="code-implementations-container">
+              <!-- Code Section A -->
+              <div class="code-block-section">
+                <div class="code-block-header">
+                  <h3><i data-lucide="database"></i> Standard Database Table Schema</h3>
+                  <button id="copy-sql-btn" class="btn btn-secondary-small">
+                    <i data-lucide="copy" class="copy-icon"></i>
+                    <i data-lucide="check" class="check-icon hidden"></i>
+                    <span class="copy-text">Copy</span>
+                  </button>
+                </div>
+                <pre class="code-pre-box select-all"><code id="sql-code-display" class="font-mono">-- Relational SQL Schema Model (PostgreSQL / MySQL compatible)
+CREATE DATABASE auth_vault_db;
+\c auth_vault_db; -- connect to database (or equivalent select catalog)
+
+-- Enable crypto extension natively if using PostgreSQL for server-side generation
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Users Account Table
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    
+    -- bcrypt outputs standard 60-character hash lengths (always allocate 255 for future safety)
+    password_hash VARCHAR(255) NOT NULL,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    last_login_at TIMESTAMP WITH TIME ZONE,
+    
+    -- Security properties to shield against brute-force lockouts
+    failed_login_attempts INT NOT NULL DEFAULT 0,
+    lockout_until TIMESTAMP WITH TIME ZONE
+);
+
+-- Indexing for microsecond speed validation queries
+CREATE INDEX idx_users_email ON users(email);</code></pre>
+              </div>
+
+              <!-- Code Section B -->
+              <div class="code-block-section">
+                <div class="code-block-header">
+                  <h3><i data-lucide="code"></i> Node.js / Express Auth Route Implementations</h3>
+                  <button id="copy-node-btn" class="btn btn-secondary-small">
+                    <i data-lucide="copy" class="copy-icon"></i>
+                    <i data-lucide="check" class="check-icon hidden"></i>
+                    <span class="copy-text">Copy</span>
+                  </button>
+                </div>
+                <pre class="code-pre-box select-all"><code id="node-code-display" class="font-mono">// Express.js & bcryptjs Password Authentication Middleware
+const express = require('express');
+const bcrypt = require('bcryptjs'); // standard asynchronous bcrypt library
+const jwt = require('jsonwebtoken'); // token provision tool
+const app = express();
+
+app.use(express.json()); // JSON payload body parser
+
+// 1. SIGNUP / REGISTER ROUTE
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { email, username, password } = req.body;
+        
+        // Input validation & sanitization
+        if (!email || !username || !password) {
+            return res.status(400).json({ error: 'All fields are strictly required.' });
+        }
+        
+        // Basic length validation
+        if (password.length &lt; 8) {
+            return res.status(400).json({ error: 'Password candidate does not meet minimum length requirement (8).' });
+        }
+
+        // Generate dynamic salt. Cost factor set to 12 (standard for production workload balance)
+        const saltRounds = 12; 
+        const salt = await bcrypt.genSalt(saltRounds);
+        
+        // Generate cryptographic salted check digest (takes approx ~100-250ms per digest)
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Save safely into database - raw password is NEVER stored or logged!
+        const newUser = await db.query(
+            'INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING id, email, created_at',
+            [email, username, hashedPassword]
+        );
+
+        res.status(201).json({ 
+            message: 'User account registered securely.', 
+            userId: newUser.rows[0].id 
+        });
+        
+    } catch (err) {
+        console.error('Registration processing error:', err.message);
+        res.status(500).json({ error: 'Internal secure server exception occurred.' });
+    }
+});
+
+// 2. SIGNIN / IDENTITY VERIFICATION ROUTE
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password candidates are required.' });
+        }
+
+        // Locate candidate profile
+        const userResult = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (userResult.rows.length === 0) {
+            // Apply constant-time processing or generic feedback to deter timing attack vector
+            return res.status(401).json({ error: 'Invalid identification credentials.' });
+        }
+        
+        const user = userResult.rows[0];
+
+        // Decrypt / Compare password safely using bcrypt standard math library which avoids timing attacks
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid identification credentials.' });
+        }
+
+        // Provision Secure Web Tokens
+        const token = jwt.sign(
+            { id: user.id, email: user.email }, 
+            process.env.JWT_SECRET_KEY, 
+            { expiresIn: '2h' }
+        );
+
+        res.json({ message: 'Authentication successful.', token });
+
+    } catch (err) {
+        console.error('Login processing error:', err.message);
+        res.status(500).json({ error: 'Internal secure server exception occurred.' });
+    }
+});</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Site Footer Section -->
+      <footer id="assessment-suite-footer" class="footer-container">
+        <div class="footer-grid">
+          
+          <!-- Sec A -->
+          <div class="footer-col">
+            <h4 class="footer-col-title">
+              <i data-lucide="hard-drive" class="footer-title-icon"></i> Structure Overview
+            </h4>
+            <p class="footer-text">
+              Crafted following modular clean-code standards, with strict separation of analytical evaluation logic and reactive UI interactions.
+            </p>
+            <ul class="footer-tree font-mono">
+              <li>📂 password-strength-analyzer/</li>
+              <li>&nbsp;&nbsp;├── index.html <span class="dim">(UI Template)</span></li>
+              <li>&nbsp;&nbsp;├── style.css <span class="dim">(Design Tokens & Layout)</span></li>
+              <li>&nbsp;&nbsp;├── script.js <span class="dim">(Assessment Math & Sandbox)</span></li>
+              <li>&nbsp;&nbsp;└── README.md <span class="dim">(Documentation)</span></li>
+            </ul>
+          </div>
+
+          <!-- Sec B -->
+          <div class="footer-col">
+            <h4 class="footer-col-title">
+              <i data-lucide="terminal" class="footer-title-icon"></i> Hashing Spec
+            </h4>
+            <p class="footer-text">
+              The Cybersecurity Lab features a real-time simulation sandbox showing the difference between plain SHA-256, salted configurations, and stretched bcrypt outputs.
+            </p>
+            <p class="footer-sub-text">
+              Key-stretching complexity scales exponentially, adding strong timing barriers to neutralize automated high-velocity dictionary lookups.
+            </p>
+          </div>
+
+          <!-- Sec C -->
+          <div class="footer-col">
+            <h4 class="footer-col-title">
+              <i data-lucide="shield-check" class="footer-title-icon"></i> Security Standards Audit
+            </h4>
+            <div class="audit-list">
+              <div class="audit-item"><i data-lucide="check" class="success-icon"></i> <span>No plain-text storage risk</span></div>
+              <div class="audit-item"><i data-lucide="check" class="success-icon"></i> <span>Zero third-party transmissions</span></div>
+              <div class="audit-item"><i data-lucide="check" class="success-icon"></i> <span>Local memory state isolation</span></div>
+              <div class="audit-item"><i data-lucide="check" class="success-icon"></i> <span>Timing attack safe comparisons</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-copyright">
+          Sentinel Suite &bull; Complete Cybersecurity Assessment Suite &bull; Made with pride by a Security Specialist.
+        </div>
+      </footer>
+    </div>
+
+    <!-- Lucide Icon Library -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Core Application Logic -->
+    <script type="module" src="/script.js"></script>
+  </body>
+</html>
